@@ -1,0 +1,31 @@
+name: Post Reel
+
+on:
+  schedule:
+    # 45-minute cycle repeats every 3 hours (times are UTC)
+    - cron: "0,45 0,3,6,9,12,15,18,21 * * *"
+    - cron: "30 1,4,7,10,13,16,19,22 * * *"
+    - cron: "15 2,5,8,11,14,17,20,23 * * *"
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: Post reel
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          VIDEO_URL: ${{ secrets.VIDEO_URL }}
+          COVER_URL: ${{ secrets.COVER_URL }}
+          CAPTION: ${{ secrets.CAPTION }}
+        run: python post_reel.py
